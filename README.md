@@ -1,14 +1,16 @@
 # Ethereum Client Switcher
 
-I created an open source Ethereum client switcher to help improve decentralization and make it easier for people to switch to minority clients.
+Easily switch your Ethereum Validator client in a single click! This tool allows node operators to easily switch from Geth to Besu in a single click (more clients coming soon)
 
-It currenly only works with Execution Clients (EC), but I'm hoping to add Concensus Clients (CC) at some point.
+The script will delete the old Geth data (username, database, etc) and install Besu with the necessary usernames, directories, permissions, and service files.
 
 To run the program, use the following commands:
 
+`sudo apt-get update && sudo apt-get install git curl -y && sudo pip install requests`
 
+`git clone https://github.com/accidental-green/client-switcher.git`
 
-SUDO UPDATE THIS LINE OF CODE
+`python3 client-switcher/client_switcher.py`
 
 
 The program will ask a few simple questions:
@@ -19,7 +21,7 @@ The program will ask a few simple questions:
 
 3) Select an Ethereum Network? (Mainnet, Goerli, Sepolia)
 
-That's it! Just 3 simple answers and the script will delete the old client info (username, database, etc) and install the new client with the necessary usernames, directories, permissions, and service files.
+That's it! Just 3 simple answers and 
 
 NOTE: This does NOT affect anything with validator keys or Concensus Client (Lighthouse, Prysm, Teku, Nimbus).
 
