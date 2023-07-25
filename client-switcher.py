@@ -402,7 +402,4 @@ if eth_client_install == 'besu':
 if eth_client_install == 'nethermind':
     print(f'Nethermind Version: \n{nethermind_version}\n')
 
-
 print(f"Client switch was successful! {eth_client_install.upper()} is now installed and ready to sync!\n")
-
-
