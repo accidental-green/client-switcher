@@ -1,6 +1,7 @@
 # Ethereum Client Switcher
 
-Open source Ethereum client switcher to help people instantly switch their execution client (Geth, Besu, Nethermind)
+Open source Ethereum client switcher to help people instantly switch their execution client (Geth, Besu, Nethermind). The switcher assumes a "standard" installation based on [Somer Esat's Guides](https://github.com/SomerEsat/ethereum-staking-guides)
+.
 
 To run the program, use the following commands:
 
