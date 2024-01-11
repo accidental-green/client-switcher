@@ -1,16 +1,1 @@
-START ALL SERVICE
-
-sudo systemctl start geth && sudo systemctl start lighthousebeacon && sudo systemctl start lighthousevalidator && sudo systemctl start mevboost
-
-
-STOP ALL SERVICES
-
-sudo systemctl stop geth && sudo systemctl stop lighthousebeacon && sudo systemctl stop lighthousevalidator && sudo systemctl stop mevboost
-
-JOURNALS
-
-journalctl -fu geth
-journalctl -fu lighthousebeacon
-journalctl -fu lighthousevalidator
-journalctl -fu mevboost
 
