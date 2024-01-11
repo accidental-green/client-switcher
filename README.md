@@ -9,7 +9,7 @@ To run the program, use the following commands:
 
 `git clone https://github.com/accidental-green/client-switcher.git`
 
-`python3 client-switcher/client-switcher.py`
+`python3 client-switcher/client-switcher-gui.py`
 
 
 The program will ask a few simple questions:
