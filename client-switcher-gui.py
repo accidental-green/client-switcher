@@ -51,7 +51,7 @@ network_menu.grid(column=1, row=0, padx=30, pady=30, ipadx=40, ipady=10)
 execution_delete_label = tk.Label(root, text="Execution Client to DELETE:", bg="#282C34", fg="#ABB2BF", font=label_font, anchor='e')
 execution_delete_label.grid(column=0, row=1, padx=30, pady=30, sticky='e')
 
-execution_clients = ('Nethermind', 'Besu', 'Geth')
+execution_clients = ('Nethermind', 'Besu', 'Geth', 'None')
 execution_delete_menu = tk.OptionMenu(root, execution_delete_var, *execution_clients)
 execution_delete_menu.config(bg="#2196F3", fg="#FFFFFF", activebackground="#64B5F6", activeforeground="#FFFFFF", font=label_font, takefocus=True)
 execution_delete_menu["menu"].config(bg="#2196F3", fg="#FFFFFF", activebackground="#64B5F6", activeforeground="#FFFFFF", font=label_font)
