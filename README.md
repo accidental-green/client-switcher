@@ -5,7 +5,7 @@ Open source Ethereum client switcher to help people instantly switch their execu
 
 To run the program, use the following commands:
 
-`sudo apt-get update && sudo apt-get install git curl -y && sudo pip install requests`
+`sudo apt-get update && sudo apt-get install git curl python3-pip python3-tk -y && sudo pip install requests`
 
 `git clone https://github.com/accidental-green/client-switcher.git`
 
