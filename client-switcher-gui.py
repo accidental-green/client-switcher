@@ -27,7 +27,7 @@ def submit():
     return eth_network, execution_client_delete, execution_client_install
 
 root = tk.Tk()
-root.title("Ethereum Validator Installer")
+root.title("Ethereum Client Switcher")
 root.configure(background="#282C34")
 
 network_var = tk.StringVar()
@@ -41,7 +41,7 @@ label_font.config(size=20)
 network_label = tk.Label(root, text="Ethereum network:", bg="#282C34", fg="#ABB2BF", font=label_font, anchor='e')
 network_label.grid(column=0, row=0, padx=30, pady=30, sticky='e')
 
-networks = ('Mainnet', 'Goerli', 'Sepolia')
+networks = ('Mainnet', 'Goerli', 'Sepolia', 'Holesky')
 network_menu = tk.OptionMenu(root, network_var, *networks)
 network_menu.config(bg="#4CAF50", fg="#FFFFFF", activebackground="#8BC34A", activeforeground="#FFFFFF", font=label_font, takefocus=True)
 network_menu["menu"].config(bg="#4CAF50", fg="#FFFFFF", activebackground="#8BC34A", activeforeground="#FFFFFF", font=label_font)
