@@ -73,17 +73,11 @@ submit_button.grid(column=1, row=3, padx=30, pady=60)
 root.mainloop()
 
 eth_network, execution_client_delete, execution_client_install = saved_data
-print("Ethereum Network:", eth_network)
-print("Execution Client to DELETE:", execution_client_delete)
-print("Execution Client to INSTALL:", execution_client_install)
 
-
-
-
-## Define User Input Variables
-#eth_network = root.saved_data[0]
-#execution_client_delete = root.saved_data[1]
-#execution_client_install = root.saved_data[2]
+# Define User Input Variables
+eth_network = saved_data[0]
+execution_client_delete = saved_data[1]
+execution_client_install = saved_data[2]
 
 # Print User Input Variables
 print("\n##### User Selected Inputs #####")
@@ -91,48 +85,9 @@ print(f"Ethereum Network: {eth_network}")
 print(f"Execution Client to DELETE: {execution_client_delete}")
 print(f"Execution Client to INSTALL: {execution_client_install}\n")
 
-
-
-eth_client_delete = execution_client_delete
-eth_client_install = execution_client_install
-
-
-# Define valid execution clients and networks
-valid_clients = ['GETH', 'BESU', 'NETHERMIND', 'NONE']
-valid_networks = ['MAINNET', 'GOERLI', 'SEPOLIA']
-
-# Ask the user for the execution client to DELETE
-#eth_client_delete = ""
-#while eth_client_delete not in valid_clients:
-#    eth_client_delete = input("\n1) Select Execution Client to REMOVE (Geth, Besu, Nethermind, #None): ").upper()
-#    if eth_client_delete not in valid_clients:
-#        print("Invalid option, please try again.")#
-#
-# Ask the user for the execution client to INSTALL
-#eth_client_install = ""
-#while eth_client_install not in valid_clients:
-#    eth_client_install = input("\n2) Select Execution Client to INSTALL (Geth, Besu, #Nethermind, None): ").upper()
-#    if eth_client_install not in valid_clients:
-#        print("Invalid option, please try again.")#
-
-# Ask the user for the network to use
-#eth_network = ""
-#while eth_network not in valid_networks:
-#    eth_network = input("\n3) Select Ethereum network (mainnet, goerli, sepolia): ").upper()
-#    if eth_network not in valid_networks:
-#       print("Invalid option, please try again.")
-
-# Confirmation
-confirmation = ""
-#while confirmation not in ['Y', 'N', 'YES', 'NO']:
-#    confirmation = input(f"\nYou are about to REMOVE {eth_client_delete} and INSTALL #{eth_client_install}. Would you like to continue (y/n)? ").upper()
-#    if confirmation not in ['Y', 'N', 'YES', 'NO']:
-#        print("Invalid option, please try again.")
-#
-#if confirmation in ['N', 'NO']:
-#    print("Operation cancelled by the user.")
-#    sys.exit()#
-
+eth_network = eth_network.lower()
+eth_client_delete = execution_client_delete.lower()
+eth_client_install = execution_client_install.lower()
 
 print("\nPlease note that some operations require sudo permissions to operate.")
 print("You may be prompted to enter your password to execute sudo commands.\n")
@@ -160,22 +115,22 @@ nethermind_cmds = [
 ]
 
 # Execute specific commands based on the user's choice
-if eth_client_delete == 'GETH':
+if eth_client_delete == 'geth':
     for cmd in geth_cmds:
         print(cmd)
         subprocess.run(cmd, shell=True, check=False)
 
-elif eth_client_delete == 'BESU':
+elif eth_client_delete == 'besu':
     for cmd in besu_cmds:
         print(cmd)
         subprocess.run(cmd, shell=True, check=False)
 
-elif eth_client_delete == 'NETHERMIND':
+elif eth_client_delete == 'nethermind':
     for cmd in nethermind_cmds:
         print(cmd)
         subprocess.run(cmd, shell=True, check=False)
 
-elif eth_client_delete == 'NONE':
+elif eth_client_delete == 'none':
     print("No client selected for deletion")
 
 # Execution Code
