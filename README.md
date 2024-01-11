@@ -27,12 +27,12 @@ Once you make your selections and click "INSTALL", the script will delete the ol
 
 NOTE: This does NOT affect anything with validator keys or Concensus Client (Lighthouse, Prysm, Teku, Nimbus).
 
-Once everything is installed, you can start the new Execution client and begin syncing. Depending on hardware/internet, it can take 24-48 hours for a full validator to sync from scratch. You can check progress in the journals.
+Once installed complete, you can start the new Execution client and begin syncing. Depending on hardware/internet, it can take 24-48 hours for a full validator to sync from scratch. You can check progress in the journals.
 
-Once everything is synced, the validator should start attesting again.
+Once everything has synced, the validator should start attesting again.
 
 This can also be used if you have a corrupted database (ex remove/reinstall GETH).
 
-If you're starting from scratch on Ubuntu, and want to do a full validator install, you can use [Instant Validators](https://github.com/accidental-green/validator-install) to do a full install in minutes.
+If you're starting from scratch on Ubuntu and want to do a full validator install, you can use [Instant Validators](https://github.com/accidental-green/validator-install) to do a full install in minutes.
 
 Suggestions and feedback always welcome. Still in testing, use with caution.
