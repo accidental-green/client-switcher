@@ -4,15 +4,13 @@ Ethereum client switcher allows validators to instantly switch their execution c
 
 The switcher assumes a "standard" installation based on [Somer Esat's Guides](https://github.com/SomerEsat/ethereum-staking-guides). but can be modified to fit any installation.
 
-<br>
  
 
-**CLIENT SWITCHER (GUI):**
-<br>
+## CLIENT SWITCHER (GUI):
 
 ![Screenshot from 2024-01-10 23-40-18](https://github.com/accidental-green/client-switcher/assets/72235883/ef1368a4-b164-4f21-b9c0-3accea0bcc5c)
 
-## Client-Switcher Instructions:
+## Client Switcher Instructions:
 
 Copy/paste the following commands into the terminal:
 
@@ -30,9 +28,7 @@ Copy/paste the following commands into the terminal:
 
 
 
-<br>
-
-**CLIENT SWITCHER:**
+## CLIENT SWITCHER:
 <br>
 
 ![Screenshot from 2024-01-10 23-40-18](https://github.com/accidental-green/client-switcher/assets/72235883/ef1368a4-b164-4f21-b9c0-3accea0bcc5c)
