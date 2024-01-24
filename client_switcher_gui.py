@@ -9,6 +9,8 @@ import sys
 import tempfile
 import urllib.request
 import zipfile
+import tkinter as tk
+from tkinter import filedialog, font
 
 # Change to the home folder
 os.chdir(os.path.expanduser("~"))
@@ -22,43 +24,72 @@ except subprocess.CalledProcessError:
     print("Failed to verify sudo credentials.")
     exit(1)
 
-############# CLI CODE #######################
+############# GUI CODE #######################
 
-# Define valid execution clients and networks
-valid_clients = ['GETH', 'BESU', 'NETHERMIND', 'NONE']
-valid_networks = ['MAINNET', 'GOERLI', 'SEPOLIA', 'HOLESKY']
+# Define a variable to store data
+saved_data = []
 
-# Ask the user for Ethereum network
-eth_network = ""
-while eth_network not in valid_networks:
-    eth_network = input("\n1) Select Ethereum network (mainnet, goerli, sepolia, holesky): ").upper()
-    if eth_network not in valid_networks:
-        print("Invalid option, please try again.")
+def submit():
+    eth_network = network_var.get()
+    execution_client_delete = execution_delete_var.get()
+    execution_client_install = execution_install_var.get()
+    saved_data.extend([eth_network, execution_client_delete, execution_client_install])
+    root.destroy()
+    
+    return eth_network, execution_client_delete, execution_client_install
 
-# Ask the user for the execution client to DELETE
-execution_client_delete = ""
-while execution_client_delete not in valid_clients:
-    execution_client_delete = input("\n2) Select Execution Client to REMOVE (geth, besu, nethermind, none): ").upper()
-    if execution_client_delete not in valid_clients:
-        print("Invalid option, please try again.")
+root = tk.Tk()
+root.title("Ethereum Client Switcher")
+root.configure(background="#282C34")
 
-# Ask the user for the execution client to INSTALL
-execution_client_install = ""
-while execution_client_install not in valid_clients:
-    execution_client_install = input("\n3) Select Execution Client to INSTALL (geth, besu, nethermind, none): ").upper()
-    if execution_client_install not in valid_clients:
-        print("Invalid option, please try again.")
+network_var = tk.StringVar()
+execution_delete_var = tk.StringVar()
+execution_install_var = tk.StringVar()
 
-# Confirmation
-confirmation = ""
-while confirmation not in ['Y', 'N', 'YES', 'NO']:
-    confirmation = input(f"\nYou have selected to REMOVE {execution_client_delete} and INSTALL {execution_client_install}. Continue (y/n)? ").upper()
-    if confirmation not in ['Y', 'N', 'YES', 'NO']:
-        print("Invalid option, please try again.")
+label_font = font.nametofont("TkDefaultFont").copy()
+label_font.config(size=20)
 
-if confirmation in ['N', 'NO']:
-    print("Operation cancelled by the user.")
-    sys.exit()
+# Ethereum network selection
+network_label = tk.Label(root, text="Ethereum network:", bg="#282C34", fg="#ABB2BF", font=label_font, anchor='e')
+network_label.grid(column=0, row=0, padx=30, pady=30, sticky='e')
+
+networks = ('Mainnet', 'Goerli', 'Sepolia', 'Holesky')
+network_menu = tk.OptionMenu(root, network_var, *networks)
+network_menu.config(bg="#4CAF50", fg="#FFFFFF", activebackground="#8BC34A", activeforeground="#FFFFFF", font=label_font, takefocus=True)
+network_menu["menu"].config(bg="#4CAF50", fg="#FFFFFF", activebackground="#8BC34A", activeforeground="#FFFFFF", font=label_font)
+network_menu.grid(column=1, row=0, padx=30, pady=30, ipadx=40, ipady=10)
+
+# Execution client selection (to delete)
+execution_delete_label = tk.Label(root, text="Execution Client to DELETE:", bg="#282C34", fg="#ABB2BF", font=label_font, anchor='e')
+execution_delete_label.grid(column=0, row=1, padx=30, pady=30, sticky='e')
+
+execution_clients = ('Nethermind', 'Besu', 'Geth', 'None')
+execution_delete_menu = tk.OptionMenu(root, execution_delete_var, *execution_clients)
+execution_delete_menu.config(bg="#2196F3", fg="#FFFFFF", activebackground="#64B5F6", activeforeground="#FFFFFF", font=label_font, takefocus=True)
+execution_delete_menu["menu"].config(bg="#2196F3", fg="#FFFFFF", activebackground="#64B5F6", activeforeground="#FFFFFF", font=label_font)
+execution_delete_menu.grid(column=1, row=1, padx=30, pady=30, ipadx=40, ipady=10)
+
+# Execution client selection (to install)
+execution_install_label = tk.Label(root, text="Execution Client to INSTALL:", bg="#282C34", fg="#ABB2BF", font=label_font, anchor='e')
+execution_install_label.grid(column=0, row=2, padx=30, pady=30, sticky='e')
+
+execution_install_menu = tk.OptionMenu(root, execution_install_var, *execution_clients)
+execution_install_menu.config(bg="#FF9800", fg="#FFFFFF", activebackground="#FFA726", activeforeground="#FFFFFF", font=label_font, takefocus=True)
+execution_install_menu["menu"].config(bg="#FF9800", fg="#FFFFFF", activebackground="#FFA726", activeforeground="#FFFFFF", font=label_font)
+execution_install_menu.grid(column=1, row=2, padx=30, pady=30, ipadx=40, ipady=10)
+
+# Submit button
+submit_button = tk.Button(root, text="Install", command=submit, bg="#282C34", fg="#ABB2BF", activebackground="#61AFEF", activeforeground="#282C34", font=label_font, takefocus=True)
+submit_button.grid(column=1, row=3, padx=30, pady=60)
+
+root.mainloop()
+
+eth_network, execution_client_delete, execution_client_install = saved_data
+
+# Define User Input Variables
+eth_network = saved_data[0]
+execution_client_delete = saved_data[1]
+execution_client_install = saved_data[2]
 
 # Print User Input Variables
 print("\n##### User Selected Inputs #####")
@@ -434,4 +465,4 @@ if execution_client_install == 'besu':
 if execution_client_install == 'nethermind':
     print(f'Nethermind Version: \n{nethermind_version}\n')
 
-print(f"See recap above, then start {execution_client_install.upper()} to begin syncing!")
+print(f"Client switch complete, you can start {execution_client_install.upper()} to begin syncing!\n")
