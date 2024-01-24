@@ -25,11 +25,15 @@ To begin installation, paste the following commands into the terminal:
 
 ### Run Client Switcher:
 
-Note: Choose either GUI or CLI
+**Note**: Choose either GUI (popup window) or CLI (in terminal)
 
-**GUI Installation:** `python3 client-switcher/client_switcher_gui.py`
+**GUI Installation:**
 
-or **CLI Installation:** `python3 client-switcher/client_switcher_cli.py`
+`python3 client-switcher/client_switcher_gui.py`
+
+or **CLI Installation:**
+
+`python3 client-switcher/client_switcher_cli.py`
 
 ### Installation Screen:
 Select the Ethereum network, client to delete, client to install, then click "Install".
