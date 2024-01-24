@@ -434,4 +434,4 @@ if execution_client_install == 'besu':
 if execution_client_install == 'nethermind':
     print(f'Nethermind Version: \n{nethermind_version}\n')
 
-print(f"See recap above, then start {execution_client_install.upper()} to begin syncing!")
+print(f"Client switch complete, you can start {execution_client_install.upper()} to begin syncing!\n")
