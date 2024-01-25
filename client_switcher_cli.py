@@ -151,7 +151,7 @@ subprocess.run(['sudo', 'apt', '-y', 'upgrade'])
 
 # Install New Client
 print(f"\nInstalling execution client: {execution_client_install}\n")
-print(f"Creating usernames, directories, and serfice files...\n")
+print(f"Creating usernames, directories, and service files...\n")
 print(execution_client_install.lower()) 
 
 ############ GETH INSTALL##################
@@ -281,11 +281,8 @@ if execution_client_install == 'nethermind':
         # Copy the contents of the temporary directory to /usr/local/bin/nethermind using sudo
         subprocess.run(["sudo", "cp", "-a", f"{temp_dir}/.", "/usr/local/bin/nethermind"])
 
-    # chown nethermind:nethermind /usr/local/bin/nethermind
-    subprocess.run(["sudo", "chown", "nethermind:nethermind", "/usr/local/bin/nethermind"])
-
-    # chown nethermind:nethermind /usr/local/bin/nethermind/nethermind
-    subprocess.run(["sudo", "chown", "nethermind:nethermind", "/usr/local/bin/nethermind/nethermind"])
+    # chown -R nethermind:nethermind /usr/local/bin/nethermind
+    subprocess.run(["sudo", "chown", "-R", "nethermind:nethermind", "/usr/local/bin/nethermind"])
 
     # chmod a+x /usr/local/bin/nethermind/nethermind
     subprocess.run(["sudo", "chmod", "a+x", "/usr/local/bin/nethermind/nethermind"])
@@ -387,8 +384,6 @@ if execution_client_install == 'nethermind':
         f'    --config {eth_network.lower()} \\',
         '    --datadir /var/lib/nethermind \\',
         '    --Sync.SnapSync true \\',
-        '    --Sync.AncientBodiesBarrier 11052984 \\',
-        '    --Sync.AncientReceiptsBarrier 11052984 \\',
         '    --JsonRpc.JwtSecretFile /var/lib/jwtsecret/jwt.hex',
         '',
         '[Install]',
@@ -413,7 +408,7 @@ if execution_client_install == 'nethermind':
 subprocess.run(f"sudo systemctl daemon-reload", shell=True, check=False)
 
 ############ PRINT FINAL OUTPUT ###############
-print("\n########### CLIENT SWTICH DETAILS #############\n")
+print("\n########### CLIENT SWITCH DETAILS #############\n")
 
 print(f'Removed: {execution_client_delete.upper()}\n')
 print(f'Installed: {execution_client_install.upper()}\n')
