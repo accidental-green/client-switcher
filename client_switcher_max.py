@@ -17,6 +17,7 @@ import requests
 import tkinter as tk
 from tkinter import filedialog, font
 from html.parser import HTMLParser
+import customtkinter as ctk
 
 # Change to the home folder
 os.chdir(os.path.expanduser("~"))
@@ -52,14 +53,31 @@ temp_keystore_dir = f'{os.environ["HOME"]}/validator_keys_temp'
 # Define the keystore_button as a global variable
 keystore_button = None
 
+# Design system
+BG         = "#1a1b1e"
+CARD_BG    = "#25262b"
+ACCENT     = "#5c7cfa"
+ACCENT_H   = "#4c6ef5"
+DANGER     = "#fa5252"
+DANGER_H   = "#e03131"
+SUCCESS    = "#51cf66"
+SUCCESS_H  = "#2f9e44"
+BLUE       = "#339af0"
+BLUE_H     = "#1c7ed6"
+TEXT       = "#ffffff"
+TEXT_MUTED = "#868e96"
+BORDER     = "#2c2e33"
+
+ctk.set_appearance_mode("dark")
+ctk.set_default_color_theme("blue")
+
 def check_keystore_directory():
-    global keystore_button  # Define keystore_button as a global variable
+    global keystore_button
     if keystore_button is not None:
         if os.path.exists(temp_keystore_dir) and os.listdir(temp_keystore_dir):
-            # Directory exists and is not empty
-            keystore_button.config(text="Keystore successfully imported!", bg="#90EE90", fg="#282C34") # Light green with changed text
+            keystore_button.configure(text="Keystore successfully imported!", fg_color=SUCCESS, hover_color=SUCCESS_H, text_color="#1a1b1e")
         else:
-            keystore_button.config(text="Import Keystore", bg="#61afef", fg="#282C34")  # Original color and text
+            keystore_button.configure(text="Import Keystore", fg_color=BLUE, hover_color=BLUE_H, text_color=TEXT)
 
 # GUI Code
 def open_menu(event):
@@ -90,24 +108,29 @@ def import_keystore():
     return destination_path
 
 def update_keystore_button():
-    home_dir = os.path.expanduser('~')
-    
     if os.path.exists(temp_keystore_dir) and os.listdir(temp_keystore_dir):
-        # Directory exists and is not empty
-        keystore_button.config(text="Keystore successfully imported!", bg="#90EE90", fg="#282C34") # Light green with changed text
+        keystore_button.configure(text="Keystore successfully imported!", fg_color=SUCCESS, hover_color=SUCCESS_H, text_color="#1a1b1e")
     else:
-        keystore_button.config(text="Import Keystore", bg="#61afef", fg="#282C34")  # Original color and text
+        keystore_button.configure(text="Import Keystore", fg_color=BLUE, hover_color=BLUE_H, text_color=TEXT)
 
 # Create Root Window
-root = tk.Tk()
+root = ctk.CTk()
 root.title("Ethereum Client Switcher")
-root.configure(background="#282C34")
+root.configure(fg_color=BG)
+root.resizable(False, False)
+
+# Center window on screen
+WIN_W, WIN_H = 600, 880
+root.update_idletasks()
+x = (root.winfo_screenwidth() - WIN_W) // 2
+y = (root.winfo_screenheight() - WIN_H) // 2
+root.geometry(f"{WIN_W}x{WIN_H}+{x}+{y}")
 
 # Define a variable to store data
 saved_data = []
 
 # Add a variable to store Ethereum Address
-eth_address_var = tk.StringVar()
+eth_address_var = ctk.StringVar()
 
 def submit():
     eth_network = network_var.get()
@@ -117,110 +140,141 @@ def submit():
     consensus_client_install = consensus_install_var.get()  # Get consensus client to install
     mevboost = mevboost_var.get()  # Get Mevboost option
     eth_address = eth_address_var.get()  # Get Ethereum Address
-    
+
     saved_data.extend([eth_network, execution_client_delete, consensus_client_delete, execution_client_install, consensus_client_install, mevboost, eth_address])
     root.destroy()
 
 # Define variables
-network_var = tk.StringVar()
-execution_delete_var = tk.StringVar()
-consensus_delete_var = tk.StringVar()
-execution_install_var = tk.StringVar()
-consensus_install_var = tk.StringVar()
-mevboost_var = tk.StringVar()
-eth_address_var = tk.StringVar()
+network_var = ctk.StringVar()
+execution_delete_var = ctk.StringVar()
+consensus_delete_var = ctk.StringVar()
+execution_install_var = ctk.StringVar()
+consensus_install_var = ctk.StringVar()
+mevboost_var = ctk.StringVar()
+eth_address_var = ctk.StringVar()
 
-label_font = font.nametofont("TkDefaultFont").copy()
-label_font.config(size=20)
+FONT_HEADER  = ctk.CTkFont(size=15, weight="bold")
+FONT_SECTION = ctk.CTkFont(size=12, weight="bold")
+FONT_LABEL   = ctk.CTkFont(size=13)
+FONT_MUTED   = ctk.CTkFont(size=11)
+FONT_BTN     = ctk.CTkFont(size=14, weight="bold")
+FONT_MENU    = ctk.CTkFont(size=13)
+FONT_ENTRY   = ctk.CTkFont(size=13)
 
-# Ethereum network selection label
-network_label = tk.Label(root, text="Ethereum Network:", bg="#282C34", fg="#ABB2BF", font=label_font, anchor='e')
-network_label.grid(column=0, row=0, padx=30, pady=30, sticky='e')
+# ── App header ────────────────────────────────────────────────────
+header = ctk.CTkFrame(root, fg_color="transparent")
+header.pack(fill="x", padx=24, pady=(20, 4))
+
+ctk.CTkLabel(header, text="Ethereum Client Switcher",
+             font=FONT_HEADER, text_color=TEXT).pack(anchor="w")
+ctk.CTkLabel(header, text="Configure network, clients, MEV boost and validator settings",
+             font=FONT_MUTED, text_color=TEXT_MUTED).pack(anchor="w")
+
+# ── Helper: section card ──────────────────────────────────────────
+def make_card(parent):
+    return ctk.CTkFrame(parent, fg_color=CARD_BG, corner_radius=10,
+                        border_width=1, border_color=BORDER)
+
+# ── Helper: dropdown row ──────────────────────────────────────────
+def make_row(card, label_text, var, options, fg, hover):
+    row = ctk.CTkFrame(card, fg_color="transparent")
+    row.pack(fill="x", padx=20, pady=7)
+    ctk.CTkLabel(row, text=label_text, font=FONT_LABEL,
+                 text_color=TEXT, anchor="w", width=240).pack(side="left")
+    menu = ctk.CTkOptionMenu(row, variable=var, values=list(options),
+                             font=FONT_MENU, fg_color=fg, button_color=hover,
+                             button_hover_color=hover, dropdown_hover_color=hover,
+                             text_color=TEXT, width=210, height=36, corner_radius=8)
+    menu.pack(side="right")
+    return menu
+
+# ── Network card ──────────────────────────────────────────────────
+net_card = make_card(root)
+net_card.pack(fill="x", padx=24, pady=(10, 5))
+
+ctk.CTkLabel(net_card, text="NETWORK", font=FONT_SECTION,
+             text_color=TEXT_MUTED).pack(anchor="w", padx=20, pady=(12, 4))
 
 networks = ('Mainnet', 'Goerli', 'Sepolia', 'Holesky')
-network_menu = tk.OptionMenu(root, network_var, *networks)
-network_menu.config(bg="#9370DB", fg="#FFFFFF", activebackground="#9370DB", activeforeground="#FFFFFF", font=label_font, takefocus=True)
-network_menu["menu"].config(bg="#9370DB", fg="#FFFFFF", activebackground="#9370DB", activeforeground="#FFFFFF", font=label_font)
-network_menu.grid(column=1, row=0, padx=30, pady=30, ipadx=40, ipady=10)
+network_var.set(networks[0])
+make_row(net_card, "Ethereum Network", network_var, networks, ACCENT, ACCENT_H)
 
-# Add a separator (thicker white line) below Ethereum Network
-separator3 = tk.Frame(root, height=40, bg="white", relief="sunken", borderwidth=40)
-separator3.grid(column=0, row=1, columnspan=2, sticky="ew", padx=30, pady=20)
+ctk.CTkFrame(net_card, fg_color="transparent", height=6).pack()
 
-# Execution client selection (to delete) - Second Section with Updated Color Scheme
-execution_delete_label_2 = tk.Label(root, text="Execution Client to DELETE:", bg="#282C34", fg="#ABB2BF", font=label_font, anchor='e')
-execution_delete_label_2.grid(column=0, row=2, padx=30, pady=30, sticky='e')
+# ── Remove clients card ───────────────────────────────────────────
+rm_card = make_card(root)
+rm_card.pack(fill="x", padx=24, pady=5)
 
-execution_delete_menu_2 = tk.OptionMenu(root, execution_delete_var, *exec_labels)
-execution_delete_menu_2.config(bg="#FF5722", fg="#FFFFFF", activebackground="#FF7043", activeforeground="#FFFFFF", font=label_font, takefocus=True)
-execution_delete_menu_2["menu"].config(bg="#FF5722", fg="#FFFFFF", activebackground="#FF7043", activeforeground="#FFFFFF", font=label_font)
-execution_delete_menu_2.grid(column=1, row=2, padx=30, pady=30, ipadx=40, ipady=10)
+ctk.CTkLabel(rm_card, text="REMOVE CLIENTS", font=FONT_SECTION,
+             text_color=TEXT_MUTED).pack(anchor="w", padx=20, pady=(12, 4))
 
-# Consensus client selection (to delete)
-consensus_delete_label = tk.Label(root, text="Consensus Client to DELETE:", bg="#282C34", fg="#ABB2BF", font=label_font, anchor='e')
-consensus_delete_label.grid(column=0, row=3, padx=30, pady=30, sticky='e')
+execution_delete_var.set('None')
+make_row(rm_card, "Execution Client to Remove", execution_delete_var,
+         exec_labels, DANGER, DANGER_H)
 
-consensus_clients = ('Lighthouse', 'Prysm', 'Nimbus', 'Teku', 'None')
-consensus_delete_menu = tk.OptionMenu(root, consensus_delete_var, *cons_labels)
-consensus_delete_menu.config(bg="#FF5722", fg="#FFFFFF", activebackground="#FF7043", activeforeground="#FFFFFF", font=label_font, takefocus=True)
-consensus_delete_menu["menu"].config(bg="#FF5722", fg="#FFFFFF", activebackground="#FF7043", activeforeground="#FFFFFF", font=label_font)
-consensus_delete_menu.grid(column=1, row=3, padx=30, pady=30, ipadx=40, ipady=10)
+consensus_delete_var.set('None')
+make_row(rm_card, "Consensus Client to Remove", consensus_delete_var,
+         cons_labels, DANGER, DANGER_H)
 
-# Separator (thicker white line)
-separator = tk.Frame(root, height=40, bg="white", relief="sunken", borderwidth=40)
-separator.grid(column=0, row=4, columnspan=2, sticky="ew", padx=30, pady=20)
+ctk.CTkFrame(rm_card, fg_color="transparent", height=6).pack()
 
-# Execution client selection (to install)
-execution_install_label = tk.Label(root, text="Execution Client to INSTALL:", bg="#282C34", fg="#ABB2BF", font=label_font, anchor='e')
-execution_install_label.grid(column=0, row=5, padx=30, pady=30, sticky='e')
+# ── Install clients card ──────────────────────────────────────────
+inst_card = make_card(root)
+inst_card.pack(fill="x", padx=24, pady=5)
 
-execution_install_menu = tk.OptionMenu(root, execution_install_var, *exec_labels)
-execution_install_menu.config(bg="#4CAF50", fg="#FFFFFF", activebackground="#8BC34A", activeforeground="#FFFFFF", font=label_font, takefocus=True)
-execution_install_menu["menu"].config(bg="#4CAF50", fg="#FFFFFF", activebackground="#8BC34A", activeforeground="#FFFFFF", font=label_font)
-execution_install_menu.grid(column=1, row=5, padx=30, pady=30, ipadx=40, ipady=10)
+ctk.CTkLabel(inst_card, text="INSTALL CLIENTS", font=FONT_SECTION,
+             text_color=TEXT_MUTED).pack(anchor="w", padx=20, pady=(12, 4))
 
+execution_install_var.set('None')
+make_row(inst_card, "Execution Client to Install", execution_install_var,
+         exec_labels, SUCCESS, SUCCESS_H)
 
-# Consensus client selection (to install)
-consensus_install_label_2 = tk.Label(root, text="Consensus Client to INSTALL:", bg="#282C34", fg="#ABB2BF", font=label_font, anchor='e')
-consensus_install_label_2.grid(column=0, row=6, padx=30, pady=30, sticky='e')
+consensus_install_var.set('None')
+make_row(inst_card, "Consensus Client to Install", consensus_install_var,
+         cons_labels, SUCCESS, SUCCESS_H)
 
-consensus_install_menu_2 = tk.OptionMenu(root, consensus_install_var, *cons_labels)
-consensus_install_menu_2.config(bg="#4CAF50", fg="#FFFFFF", activebackground="#8BC34A", activeforeground="#FFFFFF", font=label_font, takefocus=True)
-consensus_install_menu_2["menu"].config(bg="#4CAF50", fg="#FFFFFF", activebackground="#8BC34A", activeforeground="#FFFFFF", font=label_font)
-consensus_install_menu_2.grid(column=1, row=6, padx=30, pady=30, ipadx=40, ipady=10)
+# MEV Boost row inside install card
+mevboost_var.set('Off')
+make_row(inst_card, "MEV Boost", mevboost_var, ('On', 'Off'), BLUE, BLUE_H)
 
-# Mevboost label
-mevboost_label = tk.Label(root, text="Mevboost Settings (On/Off):", bg="#282C34", fg="#ABB2BF", font=label_font, anchor='e')
-mevboost_label.grid(column=0, row=7, padx=30, pady=30, sticky='e')
+ctk.CTkFrame(inst_card, fg_color="transparent", height=6).pack()
 
-# Mevboost options
-mevboost_options = ('On', 'Off')
-mevboost_menu = tk.OptionMenu(root, mevboost_var, *mevboost_options)
-mevboost_menu.config(bg="#2196F3", fg="#FFFFFF", activebackground="#64B5F6", activeforeground="#FFFFFF", font=label_font, takefocus=True)
-mevboost_menu["menu"].config(bg="#2196F3", fg="#FFFFFF", activebackground="#64B5F6", activeforeground="#FFFFFF", font=label_font)
-mevboost_menu.grid(column=1, row=7, padx=30, pady=30, ipadx=40, ipady=10)
+# ── Settings card ─────────────────────────────────────────────────
+settings_card = make_card(root)
+settings_card.pack(fill="x", padx=24, pady=5)
 
-# Add a separator (thicker white line) between Mevboost and Ethereum Address
-separator4 = tk.Frame(root, height=40, bg="white", relief="sunken", borderwidth=40)
-separator4.grid(column=0, row=8, columnspan=2, sticky="ew", padx=30, pady=20)
+ctk.CTkLabel(settings_card, text="VALIDATOR SETTINGS", font=FONT_SECTION,
+             text_color=TEXT_MUTED).pack(anchor="w", padx=20, pady=(12, 4))
 
-# Address for Validator Tips input
-eth_address_label = tk.Label(root, text="ETH Address for Validator Tips:", bg="#282C34", fg="#ABB2BF", font=label_font, anchor='e')
-eth_address_label.grid(column=0, row=9, padx=30, pady=30, sticky='e')
+# ETH address row
+addr_row = ctk.CTkFrame(settings_card, fg_color="transparent")
+addr_row.pack(fill="x", padx=20, pady=7)
+ctk.CTkLabel(addr_row, text="ETH Address for Validator Tips", font=FONT_LABEL,
+             text_color=TEXT, anchor="w", width=240).pack(side="left")
+eth_address_entry = ctk.CTkEntry(addr_row, textvariable=eth_address_var,
+                                 placeholder_text="0x...", font=FONT_ENTRY,
+                                 width=210, height=36, corner_radius=8)
+eth_address_entry.pack(side="right")
 
-eth_address_entry = tk.Entry(root, textvariable=eth_address_var, font=label_font)
-eth_address_entry.grid(column=1, row=9, padx=30, pady=30, ipadx=40, ipady=10)
+# Keystore import row
+ks_row = ctk.CTkFrame(settings_card, fg_color="transparent")
+ks_row.pack(fill="x", padx=20, pady=7)
+ctk.CTkLabel(ks_row, text="Import existing keystore (optional)", font=FONT_LABEL,
+             text_color=TEXT, anchor="w", width=240).pack(side="left")
+keystore_button = ctk.CTkButton(ks_row, text="Import Keystore",
+                                command=import_keystore,
+                                fg_color=BLUE, hover_color=BLUE_H,
+                                font=FONT_MENU, text_color=TEXT,
+                                width=210, height=36, corner_radius=8)
+keystore_button.pack(side="right")
 
-# Keystore import
-keystore_label = tk.Label(root, text='Import existing keystore (optional):', bg="#282C34", fg="#ABB2BF", font=label_font, anchor='e')
-keystore_label.grid(column=0, row=10, padx=30, pady=30, sticky='e')
+ctk.CTkFrame(settings_card, fg_color="transparent", height=6).pack()
 
-keystore_button = tk.Button(root, text="Import Keystore", command=import_keystore, bg="#61afef", fg="#282C34", activebackground="#282C34", activeforeground="#ABB2BF", font=label_font, takefocus=True)
-keystore_button.grid(column=1, row=10, padx=30, pady=30)
-
-# Submit button
-submit_button = tk.Button(root, text="Install", command=submit, bg="#C0C0C0", fg="#000000", activebackground="#61AFEF", activeforeground="#000000", font=label_font, takefocus=True)
-submit_button.grid(column=1, row=11, padx=30, pady=60)
+# ── Submit button ─────────────────────────────────────────────────
+submit_button = ctk.CTkButton(root, text="Install", command=submit,
+                              fg_color=ACCENT, hover_color=ACCENT_H,
+                              font=FONT_BTN, height=46, corner_radius=10)
+submit_button.pack(fill="x", padx=24, pady=(12, 24))
 
 root.mainloop()
 

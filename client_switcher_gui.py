@@ -11,6 +11,7 @@ import urllib.request
 import zipfile
 import tkinter as tk
 from tkinter import filedialog, font
+import customtkinter as ctk
 
 # Change to the home folder
 os.chdir(os.path.expanduser("~"))
@@ -26,6 +27,22 @@ except subprocess.CalledProcessError:
 
 ############# GUI CODE #######################
 
+# Design system
+BG         = "#1a1b1e"
+CARD_BG    = "#25262b"
+ACCENT     = "#5c7cfa"
+ACCENT_H   = "#4c6ef5"
+DANGER     = "#fa5252"
+DANGER_H   = "#e03131"
+SUCCESS    = "#51cf66"
+SUCCESS_H  = "#2f9e44"
+TEXT       = "#ffffff"
+TEXT_MUTED = "#868e96"
+BORDER     = "#2c2e33"
+
+ctk.set_appearance_mode("dark")
+ctk.set_default_color_theme("blue")
+
 # Define a variable to store data
 saved_data = []
 
@@ -35,52 +52,104 @@ def submit():
     execution_client_install = execution_install_var.get()
     saved_data.extend([eth_network, execution_client_delete, execution_client_install])
     root.destroy()
-    
+
     return eth_network, execution_client_delete, execution_client_install
 
-root = tk.Tk()
+root = ctk.CTk()
 root.title("Ethereum Client Switcher")
-root.configure(background="#282C34")
+root.configure(fg_color=BG)
+root.resizable(False, False)
 
-network_var = tk.StringVar()
-execution_delete_var = tk.StringVar()
-execution_install_var = tk.StringVar()
+# Center window on screen
+WIN_W, WIN_H = 580, 560
+root.update_idletasks()
+x = (root.winfo_screenwidth() - WIN_W) // 2
+y = (root.winfo_screenheight() - WIN_H) // 2
+root.geometry(f"{WIN_W}x{WIN_H}+{x}+{y}")
 
-label_font = font.nametofont("TkDefaultFont").copy()
-label_font.config(size=20)
+network_var = ctk.StringVar()
+execution_delete_var = ctk.StringVar()
+execution_install_var = ctk.StringVar()
 
-# Ethereum network selection
-network_label = tk.Label(root, text="Ethereum network:", bg="#282C34", fg="#ABB2BF", font=label_font, anchor='e')
-network_label.grid(column=0, row=0, padx=30, pady=30, sticky='e')
+FONT_HEADER  = ctk.CTkFont(size=15, weight="bold")
+FONT_SECTION = ctk.CTkFont(size=12, weight="bold")
+FONT_LABEL   = ctk.CTkFont(size=13)
+FONT_MUTED   = ctk.CTkFont(size=11)
+FONT_BTN     = ctk.CTkFont(size=14, weight="bold")
+FONT_MENU    = ctk.CTkFont(size=13)
+
+# ── App header ────────────────────────────────────────────────────
+header = ctk.CTkFrame(root, fg_color="transparent")
+header.pack(fill="x", padx=24, pady=(24, 6))
+
+ctk.CTkLabel(header, text="Ethereum Client Switcher",
+             font=FONT_HEADER, text_color=TEXT).pack(anchor="w")
+ctk.CTkLabel(header, text="Select your network and execution clients below",
+             font=FONT_MUTED, text_color=TEXT_MUTED).pack(anchor="w")
+
+# ── Helper: section card ──────────────────────────────────────────
+def make_card(parent):
+    return ctk.CTkFrame(parent, fg_color=CARD_BG, corner_radius=10,
+                        border_width=1, border_color=BORDER)
+
+# ── Helper: dropdown row ──────────────────────────────────────────
+def make_row(card, label_text, var, options, fg, hover):
+    row = ctk.CTkFrame(card, fg_color="transparent")
+    row.pack(fill="x", padx=20, pady=8)
+    ctk.CTkLabel(row, text=label_text, font=FONT_LABEL,
+                 text_color=TEXT, anchor="w", width=220).pack(side="left")
+    menu = ctk.CTkOptionMenu(row, variable=var, values=list(options),
+                             font=FONT_MENU, fg_color=fg, button_color=hover,
+                             button_hover_color=hover, dropdown_hover_color=hover,
+                             text_color=TEXT, width=200, height=36, corner_radius=8)
+    menu.pack(side="right")
+    return menu
+
+# ── Network card ──────────────────────────────────────────────────
+net_card = make_card(root)
+net_card.pack(fill="x", padx=24, pady=(10, 6))
+
+ctk.CTkLabel(net_card, text="NETWORK", font=FONT_SECTION,
+             text_color=TEXT_MUTED).pack(anchor="w", padx=20, pady=(14, 4))
 
 networks = ('Mainnet', 'Goerli', 'Sepolia', 'Holesky')
-network_menu = tk.OptionMenu(root, network_var, *networks)
-network_menu.config(bg="#4CAF50", fg="#FFFFFF", activebackground="#8BC34A", activeforeground="#FFFFFF", font=label_font, takefocus=True)
-network_menu["menu"].config(bg="#4CAF50", fg="#FFFFFF", activebackground="#8BC34A", activeforeground="#FFFFFF", font=label_font)
-network_menu.grid(column=1, row=0, padx=30, pady=30, ipadx=40, ipady=10)
+network_var.set(networks[0])
+make_row(net_card, "Ethereum Network", network_var, networks, ACCENT, ACCENT_H)
 
-# Execution client selection (to delete)
-execution_delete_label = tk.Label(root, text="Execution Client to DELETE:", bg="#282C34", fg="#ABB2BF", font=label_font, anchor='e')
-execution_delete_label.grid(column=0, row=1, padx=30, pady=30, sticky='e')
+ctk.CTkFrame(net_card, fg_color="transparent", height=8).pack()
+
+# ── Remove client card ────────────────────────────────────────────
+rm_card = make_card(root)
+rm_card.pack(fill="x", padx=24, pady=6)
+
+ctk.CTkLabel(rm_card, text="REMOVE CLIENT", font=FONT_SECTION,
+             text_color=TEXT_MUTED).pack(anchor="w", padx=20, pady=(14, 4))
 
 execution_clients = ('Nethermind', 'Besu', 'Geth', 'None')
-execution_delete_menu = tk.OptionMenu(root, execution_delete_var, *execution_clients)
-execution_delete_menu.config(bg="#2196F3", fg="#FFFFFF", activebackground="#64B5F6", activeforeground="#FFFFFF", font=label_font, takefocus=True)
-execution_delete_menu["menu"].config(bg="#2196F3", fg="#FFFFFF", activebackground="#64B5F6", activeforeground="#FFFFFF", font=label_font)
-execution_delete_menu.grid(column=1, row=1, padx=30, pady=30, ipadx=40, ipady=10)
+execution_delete_var.set('None')
+make_row(rm_card, "Execution Client to Remove", execution_delete_var,
+         execution_clients, DANGER, DANGER_H)
 
-# Execution client selection (to install)
-execution_install_label = tk.Label(root, text="Execution Client to INSTALL:", bg="#282C34", fg="#ABB2BF", font=label_font, anchor='e')
-execution_install_label.grid(column=0, row=2, padx=30, pady=30, sticky='e')
+ctk.CTkFrame(rm_card, fg_color="transparent", height=8).pack()
 
-execution_install_menu = tk.OptionMenu(root, execution_install_var, *execution_clients)
-execution_install_menu.config(bg="#FF9800", fg="#FFFFFF", activebackground="#FFA726", activeforeground="#FFFFFF", font=label_font, takefocus=True)
-execution_install_menu["menu"].config(bg="#FF9800", fg="#FFFFFF", activebackground="#FFA726", activeforeground="#FFFFFF", font=label_font)
-execution_install_menu.grid(column=1, row=2, padx=30, pady=30, ipadx=40, ipady=10)
+# ── Install client card ───────────────────────────────────────────
+inst_card = make_card(root)
+inst_card.pack(fill="x", padx=24, pady=6)
 
-# Submit button
-submit_button = tk.Button(root, text="Install", command=submit, bg="#282C34", fg="#ABB2BF", activebackground="#61AFEF", activeforeground="#282C34", font=label_font, takefocus=True)
-submit_button.grid(column=1, row=3, padx=30, pady=60)
+ctk.CTkLabel(inst_card, text="INSTALL CLIENT", font=FONT_SECTION,
+             text_color=TEXT_MUTED).pack(anchor="w", padx=20, pady=(14, 4))
+
+execution_install_var.set('None')
+make_row(inst_card, "Execution Client to Install", execution_install_var,
+         execution_clients, SUCCESS, SUCCESS_H)
+
+ctk.CTkFrame(inst_card, fg_color="transparent", height=8).pack()
+
+# ── Submit button ─────────────────────────────────────────────────
+submit_button = ctk.CTkButton(root, text="Install", command=submit,
+                              fg_color=ACCENT, hover_color=ACCENT_H,
+                              font=FONT_BTN, height=46, corner_radius=10)
+submit_button.pack(fill="x", padx=24, pady=(14, 24))
 
 root.mainloop()
 
